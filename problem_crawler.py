@@ -65,7 +65,9 @@ def getinfo(level, pid):
             content[p+1] = content[p+1].replace('<pre>', '').replace('</pre>', '')
             sample_input += '输入样例{i}：\n{des}'.format(i=i, des=content[p])
             sample_output += '输出样例{i}：\n{des}'.format(i=i, des=content[p+1])
-
+    
+    if '<img src="' in description:
+        description = description.replace('<img src="', '<img src="https://www.patest.cn')
     # title description input output sample_input sample_output source time_limit memory_limit
     return {'title': title.encode("utf-8"), 'description': description, 'input': input_des, 'output': output_des,
             'sample_input': sample_input, 'sample_output': sample_output, 'source': source,
