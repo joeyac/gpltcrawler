@@ -1,0 +1,4 @@
+MySQLdb
+BeautifulSoup
+robobrowser
+html5lib
