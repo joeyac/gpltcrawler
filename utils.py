@@ -26,9 +26,6 @@ logging.getLogger('').addHandler(error)
 
 logger = logging
 
-
-SERVER = False
-
 WAIT_CODE = 0
 
 RESULT_MAP = {
@@ -49,6 +46,9 @@ LANG_MAP = {
     3: '10',  # java
 }
 
+
+SERVER = False
+
 if SERVER:
     DATABASE_INFO = {
         'ip': 'localhost',
@@ -63,3 +63,5 @@ else:
         'pwd': 'testuser',
         'database': 'oj',
     }
+
+user_json_file = 'new-user-pwd.json'

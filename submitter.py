@@ -3,6 +3,14 @@ from utils import logger
 from robobrowser import RoboBrowser
 import time
 import html5lib
+import hashlib
+import os
+
+
+def rand_str(length=32):
+    if length > 128:
+        raise ValueError("length must <= 128")
+    return hashlib.sha512(os.urandom(128)).hexdigest()[0:length]
 
 
 class GPLT:
@@ -10,6 +18,7 @@ class GPLT:
     URL_HOME = 'https://www.patest.cn/'
     URL_LOGIN = URL_HOME + 'users/sign_in'
     URL_SUBMIT = URL_HOME + 'contests/gplt/'
+    URL_REGISTER = URL_HOME + 'users/sign_up'
 
     # language
     LANGUAGE = {
@@ -26,6 +35,29 @@ class GPLT:
         self.result_url = None
         self.result = None
         self.case_result = None
+
+    def register(self):
+        self.browser.open(GPLT.URL_REGISTER)
+        str1 = rand_str(8)
+        str2 = rand_str(4)
+        email = '{str1}@str2.com'.format(str1=str1, str2=str2)
+
+        register_form = self.browser.get_form('new_user')
+
+        register_form['user[handle]'] = self.user_id
+        register_form['user[email]'] = email
+        register_form['user[password]'] = self.password
+        register_form['user[password_confirmation]'] = self.password
+
+        self.browser.submit_form(register_form)
+
+        checks = list(map(lambda x: x.getText().strip(), self.browser.select('h2')))
+        for check in checks:
+            if u'错误' in check:
+                print check
+                return False
+
+        return True
 
     def login(self):
         self.browser.open(GPLT.URL_LOGIN)
@@ -158,5 +190,21 @@ qwewqewqewq
         return 0;
     }
     '''
-    inf = _submit(1, 7, 'c++', src)
-    print inf['compile_info'] , type(inf['compile_info'])
+    data = []
+    for i in range(10):
+        username = rand_str(10)
+        password = rand_str()
+        print i+1, username, password
+        g = GPLT(username, password)
+        if g.register():
+            u_p = {'user': username, 'pwd': password}
+            data.append(u_p)
+        else:
+            print 'unlucky!'
+        time.sleep(2)
+    f = open('new-user-pwd.json', 'w')
+    import json
+    f.write(json.dumps(data))
+    f.close()
+    # inf = _submit(1, 7, 'c++', src)
+    # print inf['compile_info'] , type(inf['compile_info'])

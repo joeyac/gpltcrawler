@@ -12,7 +12,7 @@ import Queue
 import time
 import json
 from threading import Thread
-from utils import logger, RESULT_MAP, DATABASE_INFO
+from utils import logger, RESULT_MAP, DATABASE_INFO, user_json_file
 from database import wait2que, submit, update, update_compile_info
 
 
@@ -82,8 +82,11 @@ def main():
     db = MySQLdb.connect(DATABASE_INFO['ip'], DATABASE_INFO['user'],
                          DATABASE_INFO['pwd'], DATABASE_INFO['database'], charset='utf8')
     # 根据json文件里的用户密码数量创建对应个数worker
-    info = json.load(open('user-pwd.json'))
+    info = json.load(open(user_json_file))
+    cnt = 0
     for ele in info:
+        print cnt
+        cnt += 1
         uid = ele['user']
         pwd = ele['pwd']
         worker = SubmitWorker(uid, pwd, que)
