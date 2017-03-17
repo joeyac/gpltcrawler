@@ -6,7 +6,7 @@ craw problem info and submit code to https://www.patest.cn/contests/gplt
 1. add username and password in user-pwd.json
 
 2. change config in utils.py
-    1. install the pip requirement.
+    1. install the pip requirement use <code>pip install -r requirements.txt</code>.
     
     2. set <code>user_json_file</code> to your user-pwd file name.
 
