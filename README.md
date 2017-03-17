@@ -1,6 +1,12 @@
 # gpltcrawler
 craw problem info and submit code to https://www.patest.cn/contests/gplt
 
+## require
+   
+   1. ubuntu 14.04 or higher
+   
+   2. <code>sudo apt-get install libmysqld-dev</code>
+
 ## How to use
 
 1. add username and password in user-pwd.json

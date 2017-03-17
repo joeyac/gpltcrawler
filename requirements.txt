@@ -1,4 +1,4 @@
-MySQLdb
+mysql
 beautifulsoup4
 robobrowser
 html5lib
