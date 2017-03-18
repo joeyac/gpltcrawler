@@ -33,13 +33,13 @@ class SubmitWorker(Thread):
 
             if cur_time - self.time_stamp < 15:
                 wait_time = int(15 + self.time_stamp - cur_time + 1)
-                logger.info('{uid} should wait for {wait}s.'.format(uid=self.uid, wait=wait_time))
+                logger.info('[worker:{uid}] should wait for {wait}s.'.format(uid=self.uid, wait=wait_time))
                 time.sleep(wait_time)
 
             res = submit(self.db, sid, self.uid, self.pwd)
 
             if not res:
-                s = '{uid} submit {sid} failed.'.format(uid=self.uid, sid=sid)
+                s = '[worker:{uid}] submit {sid} failed.'.format(uid=self.uid, sid=sid)
                 logger.exception(s)
 
                 self.time_stamp = time.time()
@@ -78,20 +78,29 @@ def main():
     # result2wait(init_db)
 
     # 正式过程
-    que = Queue.Queue()
-    db = MySQLdb.connect(DATABASE_INFO['ip'], DATABASE_INFO['user'],
-                         DATABASE_INFO['pwd'], DATABASE_INFO['database'], charset='utf8')
-    # 根据json文件里的用户密码数量创建对应个数worker
-    info = json.load(open(user_json_file))
-    cnt = 0
-    for ele in info:
-        print cnt
-        cnt += 1
-        uid = ele['user']
-        pwd = ele['pwd']
-        worker = SubmitWorker(uid, pwd, que)
-        worker.daemon = True
-        worker.start()
+    try:
+        que = Queue.Queue()
+        db = MySQLdb.connect(DATABASE_INFO['ip'], DATABASE_INFO['user'],
+                             DATABASE_INFO['pwd'], DATABASE_INFO['database'], charset='utf8')
+    except Exception as e:
+        logger.error(e)
+        raw_input('please check database information in utils.py, press enter to exit.')
+        return
+
+    try:
+        # 根据json文件里的用户密码数量创建对应个数worker
+        info = json.load(open(user_json_file))
+        for ele in info:
+            uid = ele['user']
+            pwd = ele['pwd']
+            worker = SubmitWorker(uid, pwd, que)
+            worker.daemon = True
+            worker.start()
+        logger.info('start {num} submit worker.'.format(num=len(info)))
+    except Exception as e:
+        logger.error(e)
+        raw_input('please check user-pwd.json file, press enter to exit.')
+        return
     # problem_id 1039 solution_id 5054
     try:
         logger.info('start monitor.')
@@ -104,7 +113,7 @@ def main():
 
             que.join()
             if flag:
-                logger.info('get queueing submission end.')
+                logger.info('update queueing submission end.')
             time.sleep(3)
 
     except KeyboardInterrupt:

@@ -40,6 +40,7 @@ def wait2que(db, queue):
             # 将solution_id 加入队列
             flag = True
             queue.put(row[0])
+            logger.info('submission[{user}:problem {pid}] in queue.'.format(user=row[2], pid=row[1]))
         return flag
     except Exception as e:
         logger.exception(e)
